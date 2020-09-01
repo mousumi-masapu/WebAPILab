@@ -77,7 +77,7 @@ namespace WebAPICRUD.Controllers
             products = products.Except(product).ToList();
         }
         [HttpPut("{id}")]
-        public void put(int id,[FromBody] Product product)
+        public void Put(int id,[FromBody] Product product)
         {
             var exsistingProduct = products.Where(p => p.Id == id);
             products = products.Except(exsistingProduct).ToList();
