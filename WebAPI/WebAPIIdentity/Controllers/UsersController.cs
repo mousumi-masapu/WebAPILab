@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebAPIIdentity.Controllers
 {
@@ -133,13 +134,33 @@ namespace WebAPIIdentity.Controllers
 
             var user = await _context.Users.SingleOrDefaultAsync(user => user.Email == model.Email);
             if (user == null)
-            
+
                 return BadRequest("User not Found");
             if (!user.VerifyPasswordHash(model.Password))
                 return BadRequest("password do not match");
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value
-                );
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return Ok(
+                new
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Token = tokenString
+                });
+       
             
 
         }
