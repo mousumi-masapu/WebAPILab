@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace JsonAPISerialization
 {
+    
     class Student
     {
 
@@ -17,4 +18,5 @@ namespace JsonAPISerialization
 
 
     }
+
 }

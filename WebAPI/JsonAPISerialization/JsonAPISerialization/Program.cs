@@ -17,6 +17,7 @@ namespace JsonAPISerialization
         {
 
             string path = @"D:\MVC Cloud\json\student.json";
+
             if (File.Exists(path))
             {
                 using (StreamReader fileReader = new StreamReader(path))
@@ -28,11 +29,19 @@ namespace JsonAPISerialization
                     Console.WriteLine(studentObj.Name);
                     Console.WriteLine(studentObj.RollNo);
                     Console.WriteLine(studentObj.Grade);
-                    foreach (object value in studentObj.Subjects)
+                    //Using JArray and JObject to parse the JSON File.
+                    JObject obj = JObject.Parse(jsonFileReader);
+                    var jsonArray = JArray.Parse(obj["Subjects"].ToString());
+                    foreach (var jToken in jsonArray)
                     {
-                        Console.WriteLine("Subjects:" +value);
-
+                        Console.WriteLine(jToken.ToString());
                     }
+
+                    //foreach (object value in studentObj.Subjects)
+                    //{
+                    //    Console.WriteLine("Subjects:" +value);
+
+                    //}
                     Console.Read();
                 }
 
@@ -91,4 +100,8 @@ namespace JsonAPISerialization
 
 
     }
+
 }
+
+
+
